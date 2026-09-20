@@ -1,6 +1,6 @@
 {
   "name": "Job Hunting Tracker & CRM",
-  "description": "Personal Job Hunting CRM and Outbound Recruitment Tracker with Fit Score, Google Sheets integration, Gmail outreach, and Google Calendar scheduling.",
+  "description": "Personal Job Hunting CRM and Outbound Recruitment Tracker with Google Search Lead Harvester (Google Dorking), Fit Score, Google Sheets integration, Gmail outreach, and Google Calendar scheduling.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

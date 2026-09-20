@@ -1,10 +1,10 @@
 import React from 'react';
-import { Briefcase, LayoutDashboard, Building2, Users, Send, FileSpreadsheet, CheckCircle, ExternalLink, LogOut, RefreshCw } from 'lucide-react';
+import { Briefcase, LayoutDashboard, Building2, Users, Send, FileSpreadsheet, CheckCircle, ExternalLink, LogOut, RefreshCw, Globe } from 'lucide-react';
 import { User } from 'firebase/auth';
 
 interface NavbarProps {
-  activeTab: 'dashboard' | 'leads' | 'contacts' | 'applications' | 'blueprint';
-  setActiveTab: (tab: 'dashboard' | 'leads' | 'contacts' | 'applications' | 'blueprint') => void;
+  activeTab: 'dashboard' | 'leads' | 'contacts' | 'applications' | 'blueprint' | 'harvester';
+  setActiveTab: (tab: 'dashboard' | 'leads' | 'contacts' | 'applications' | 'blueprint' | 'harvester') => void;
   user: User | null;
   isLoggingIn: boolean;
   onLogin: () => void;
@@ -156,6 +156,23 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {dueTasksCount}
               </span>
             )}
+          </button>
+
+          <button
+            onClick={() => setActiveTab('harvester')}
+            className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold whitespace-nowrap transition-all ${
+              activeTab === 'harvester'
+                ? 'bg-indigo-600 text-white shadow-xs'
+                : 'text-indigo-700 bg-indigo-50/70 hover:bg-indigo-100 hover:text-indigo-900 border border-indigo-200/60'
+            }`}
+          >
+            <Globe className="h-4 w-4 text-indigo-600 group-hover:text-indigo-700" />
+            <span>Tarik Data Google</span>
+            <span className={`ml-0.5 rounded-full px-1.5 py-0.2 text-[10px] font-bold ${
+              activeTab === 'harvester' ? 'bg-white text-indigo-700' : 'bg-indigo-600 text-white'
+            }`}>
+              Dorks
+            </span>
           </button>
 
           <button

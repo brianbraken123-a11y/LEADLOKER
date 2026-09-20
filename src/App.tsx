@@ -11,12 +11,13 @@ import { LeadsView } from './components/LeadsView';
 import { ContactsView } from './components/ContactsView';
 import { ApplicationsView } from './components/ApplicationsView';
 import { BlueprintView } from './components/BlueprintView';
+import { GoogleHarvesterView } from './components/GoogleHarvesterView';
 import { EmailModal } from './components/EmailModal';
 import { ScheduleModal } from './components/ScheduleModal';
 
 export default function App() {
   // Tabs
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'leads' | 'contacts' | 'applications' | 'blueprint'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'leads' | 'contacts' | 'applications' | 'blueprint' | 'harvester'>('dashboard');
   const [leadFilterStatus, setLeadFilterStatus] = useState<string | undefined>(undefined);
 
   // Authentication & Google Token
@@ -148,6 +149,54 @@ export default function App() {
     setLeads((prev) => [newLead, ...prev]);
   };
 
+  const handleBatchImportLeads = (newLeadsData: Omit<Lead, 'id'>[]) => {
+    const existingNums = leads
+      .map((l) => {
+        const match = l.id.match(/\d+/);
+        return match ? parseInt(match[0], 10) : 0;
+      })
+      .filter((n) => !isNaN(n));
+    let maxId = existingNums.length > 0 ? Math.max(...existingNums) : 0;
+
+    const newLeads: Lead[] = [];
+    const newContacts: Contact[] = [];
+
+    for (const item of newLeadsData) {
+      maxId++;
+      const leadId = `LD-${String(maxId).padStart(3, '0')}`;
+      const newLead: Lead = {
+        ...item,
+        id: leadId,
+      };
+      newLeads.push(newLead);
+
+      if (newLead.hrEmail) {
+        const contactExists = contacts.some(
+          (c) => c.email.toLowerCase() === newLead.hrEmail.toLowerCase()
+        );
+        if (!contactExists) {
+          newContacts.push({
+            id: `CNT-${Date.now()}-${maxId}`,
+            company: newLead.companyName,
+            contactName: newLead.contactPersonName || 'Tim Recruitment',
+            position: newLead.contactPersonRole || 'Talent Acquisition',
+            email: newLead.hrEmail,
+            linkedin: newLead.linkedin || '',
+            source: newLead.emailSource || 'Google Harvester',
+            verificationStatus: 'Job Portal',
+            lastVerified: new Date().toISOString().split('T')[0],
+            notes: `Diimpor otomatis dari Google Harvester (Posisi: ${newLead.targetPosition})`,
+          });
+        }
+      }
+    }
+
+    setLeads((prev) => [...newLeads, ...prev]);
+    if (newContacts.length > 0) {
+      setContacts((prev) => [...newContacts, ...prev]);
+    }
+  };
+
   const handleUpdateLead = (updated: Lead) => {
     setLeads((prev) => prev.map((l) => (l.id === updated.id ? updated : l)));
   };
@@ -249,6 +298,23 @@ export default function App() {
               setActiveTab('leads');
             }}
             onNavigateToApplications={() => setActiveTab('applications')}
+            onNavigateToHarvester={() => setActiveTab('harvester')}
+          />
+        )}
+
+        {activeTab === 'harvester' && (
+          <GoogleHarvesterView
+            onImportLeads={handleBatchImportLeads}
+            onDirectEmail={(companyName, contactEmail, position, contactName) => {
+              handleOpenEmailModal({
+                to: contactEmail,
+                companyName,
+                position,
+                contactName,
+              });
+            }}
+            existingLeads={leads}
+            onNavigateToLeads={() => setActiveTab('leads')}
           />
         )}
 
@@ -260,6 +326,7 @@ export default function App() {
             onDeleteLead={handleDeleteLead}
             onOpenEmailModal={handleOpenEmailModal}
             initialFilterStatus={leadFilterStatus}
+            onNavigateToHarvester={() => setActiveTab('harvester')}
           />
         )}
 

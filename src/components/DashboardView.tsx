@@ -15,7 +15,8 @@ import {
   ChevronRight,
   ArrowUpRight,
   PieChart as PieIcon,
-  BarChart3
+  BarChart3,
+  Globe
 } from 'lucide-react';
 
 interface DashboardViewProps {
@@ -25,6 +26,7 @@ interface DashboardViewProps {
   onOpenScheduleModal: (params: { companyName: string; position: string; contactEmail?: string }) => void;
   onNavigateToLeads: (filterStatus?: string) => void;
   onNavigateToApplications: () => void;
+  onNavigateToHarvester?: () => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -34,6 +36,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onOpenScheduleModal,
   onNavigateToLeads,
   onNavigateToApplications,
+  onNavigateToHarvester,
 }) => {
   // Calculations
   const totalLeads = leads.length;
@@ -99,6 +102,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
+            {onNavigateToHarvester && (
+              <button
+                onClick={onNavigateToHarvester}
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-blue-500 px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:from-indigo-600 hover:to-blue-600 transition-all cursor-pointer"
+              >
+                <Globe className="h-3.5 w-3.5" />
+                <span>Tarik Data Google (Dorks)</span>
+              </button>
+            )}
             <button
               onClick={() => onNavigateToLeads('Ready')}
               className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"

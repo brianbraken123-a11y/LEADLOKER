@@ -13,7 +13,8 @@ import {
   Info,
   Building,
   CheckCircle2,
-  X
+  X,
+  Globe
 } from 'lucide-react';
 import { calculateFitScore, USER_SKILLS, TARGET_INDUSTRIES } from '../utils/fitScore';
 
@@ -24,6 +25,7 @@ interface LeadsViewProps {
   onDeleteLead: (id: string) => void;
   onOpenEmailModal: (params: { to: string; companyName: string; contactName?: string; position: string }) => void;
   initialFilterStatus?: string;
+  onNavigateToHarvester?: () => void;
 }
 
 export const LeadsView: React.FC<LeadsViewProps> = ({
@@ -33,6 +35,7 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
   onDeleteLead,
   onOpenEmailModal,
   initialFilterStatus,
+  onNavigateToHarvester,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [priorityFilter, setPriorityFilter] = useState<string>('ALL');
@@ -165,13 +168,26 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
           </p>
         </div>
 
-        <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-indigo-700 transition-colors"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Tambah Target Lead Baru</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2.5">
+          {onNavigateToHarvester && (
+            <button
+              type="button"
+              onClick={onNavigateToHarvester}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-200 bg-indigo-50 px-3.5 py-2.5 text-xs font-semibold text-indigo-700 hover:bg-indigo-100 transition-colors shadow-2xs"
+            >
+              <Globe className="h-4 w-4 text-indigo-600" />
+              <span>Tarik Data Google (Dorks)</span>
+            </button>
+          )}
+
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-indigo-700 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Tambah Target Lead Baru</span>
+          </button>
+        </div>
       </div>
 
       {/* Filter Bar */}
